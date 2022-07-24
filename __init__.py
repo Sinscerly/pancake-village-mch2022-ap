@@ -13,20 +13,21 @@ a1 = "pancakes.png"
 APP_PATH = "/".join(__file__.split("/")[:-1])
 sys.path.append(APP_PATH)
 
-def connectToWifi():
+def connectToWifi(print):
     if not wifi.status():
         wifi.connect()
-        displayPancakes("Connecting to wifi...")
+        if print:
+          displayPancakes("Connecting to wifi...")
         if not wifi.wait():
           return 0
         return 1
 
-def loadPancakes():
-  state = connectToWifi()
+def loadPancakes(print):
+  state = connectToWifi(print)
   if state:
     pancakes = urequests.get(url).text
     displayPancakes("Pancakes made: " + pancakes)
-  else:
+  elif print:
     displayPancakes("Failed, press A")
 
 def displayPancakes(message):
@@ -44,7 +45,9 @@ def displayPancakes(message):
 
 def on_action_btn(pressed):
   if pressed:
-    loadPancakes()
+    while True:
+      loadPancakes(False)
+      time.sleep(30)
 
 def on_home_btn(pressed):
   if pressed:
@@ -53,4 +56,5 @@ def on_home_btn(pressed):
 buttons.attach(buttons.BTN_A, on_action_btn)
 buttons.attach(buttons.BTN_B, on_home_btn)
 buttons.attach(buttons.BTN_HOME, on_home_btn)
-loadPancakes()
+
+loadPancakes(True)
